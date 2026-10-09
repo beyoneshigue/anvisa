@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anvisa no DOU: suspensões e aprovações</title>
+<link rel="alternate" type="application/rss+xml" title="Anvisa no DOU" href="feed.xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --fundo: #e9eef0;
+    --papel: #f8fafb;
+    --tinta: #12262d;
+    --suave: #54666d;
+    --linha: #c7d2d6;
+    --susp: #b3321b;
+    --aprov: #1e7b52;
+    --outros: #7d8b91;
+    --foco: #1b5fa8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --fundo: #0e191d;
+      --papel: #15232a;
+      --tinta: #e3ecee;
+      --suave: #9db0b6;
+      --linha: #2a3d45;
+      --susp: #ef7a63;
+      --aprov: #4fc08d;
+      --outros: #7d9097;
+      --foco: #7fb4ee;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: 9rem; }
+  body {
+    margin: 0;
+    background: var(--fundo);
+    color: var(--tinta);
+    font: 400 1rem/1.5 "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--foco); outline-offset: 2px; }
+
+  .topo { max-width: 56rem; margin: 0 auto; padding: 2rem 1.25rem 1rem; }
+  .topo h1 {
+    font: 600 clamp(1.7rem, 4vw, 2.4rem)/1.15 "Newsreader", Georgia, serif;
+    margin: 0 0 .5rem;
+  }
+  .topo p { margin: 0; color: var(--suave); max-width: 40rem; }
+  .meta { margin-top: .75rem; font-size: .875rem; color: var(--suave); display: flex; gap: 1.25rem; flex-wrap: wrap; }
+
+  .barra {
+    position: sticky; top: 0; z-index: 5;
+    background: var(--fundo);
+    border-bottom: 1px solid var(--linha);
+  }
+  .barra-in { max-width: 56rem; margin: 0 auto; padding: .75rem 1.25rem; display: grid; gap: .75rem; }
+  .abas { display: flex; gap: .5rem; flex-wrap: wrap; }
+  .aba {
+    font: 500 .9rem/1 "Public Sans", sans-serif;
+    border: 1px solid var(--linha); background: var(--papel); color: var(--tinta);
+    padding: .55rem .8rem; border-radius: 4px; cursor: pointer;
+    display: inline-flex; gap: .45rem; align-items: center;
+  }
+  .aba[aria-pressed="true"] { background: var(--tinta); color: var(--papel); border-color: var(--tinta); }
+  .aba .n { font-variant-numeric: tabular-nums; opacity: .75; }
+  .campos { display: flex; gap: .5rem; flex-wrap: wrap; }
+  .campos input, .campos select {
+    font: 400 .95rem/1.2 "Public Sans", sans-serif;
+    padding: .6rem .7rem; border: 1px solid var(--linha); border-radius: 4px;
+    background: var(--papel); color: var(--tinta);
+  }
+  .campos input { flex: 1 1 14rem; }
+
+  main { max-width: 56rem; margin: 0 auto; padding: 1rem 1.25rem 4rem; }
+  .dia { margin: 1.75rem 0 .6rem; display: flex; align-items: baseline; gap: .75rem; }
+  .dia h2 { margin: 0; font: 600 1.15rem/1.2 "Newsreader", Georgia, serif; }
+  .dia span { color: var(--suave); font-size: .85rem; }
+
+  .ato {
+    background: var(--papel);
+    border: 1px solid var(--linha);
+    border-left: 6px solid var(--outros);
+    border-radius: 4px;
+    padding: .9rem 1rem 1rem;
+    margin-bottom: .6rem;
+  }
+  .ato[data-cat="suspensao"] { border-left-color: var(--susp); }
+  .ato[data-cat="aprovacao"] { border-left-color: var(--aprov); }
+  .rotulos { display: flex; gap: .4rem; flex-wrap: wrap; font-size: .8rem; font-weight: 600; margin-bottom: .35rem; }
+  .rotulos .tipo { color: var(--outros); }
+  .ato[data-cat="suspensao"] .tipo { color: var(--susp); }
+  .ato[data-cat="aprovacao"] .tipo { color: var(--aprov); }
+  .rotulos .un { color: var(--suave); font-weight: 500; }
+  .ato h3 { margin: 0 0 .35rem; font: 600 1.1rem/1.3 "Newsreader", Georgia, serif; }
+  .resumo { margin: 0; color: var(--tinta); max-width: 44rem; }
+  .acoes { margin-top: .6rem; display: flex; gap: 1rem; flex-wrap: wrap; font-size: .9rem; }
+  details summary { cursor: pointer; font-weight: 500; }
+  details .texto { margin: .6rem 0 0; white-space: pre-wrap; font-size: .92rem; color: var(--suave); max-width: 44rem; }
+
+  .vazio { padding: 2.5rem 1rem; text-align: center; color: var(--suave); border: 1px dashed var(--linha); border-radius: 4px; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .aba { transition: background-color .15s, color .15s; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topo">
+  <h1>Anvisa no Diário Oficial da União</h1>
+  <p>Suspensões da 4ª Diretoria (Gerência-Geral de Inspeção e Fiscalização Sanitária) e aprovações da 2ª Diretoria (Gerência-Geral de Medicamentos), atualizadas nos dias úteis.</p>
+  <div class="meta">
+    <span id="atualizado">Carregando…</span>
+    <a href="feed.xml">Assinar por RSS</a>
+  </div>
+</header>
+
+<div class="barra">
+  <div class="barra-in">
+    <div class="abas" id="abas" role="group" aria-label="Filtrar por tipo"></div>
+    <div class="campos">
+      <input id="busca" type="search" placeholder="Buscar por produto, empresa ou número do ato" aria-label="Buscar nos atos">
+      <select id="periodo" aria-label="Período">
+        <option value="7">Últimos 7 dias</option>
+        <option value="30" selected>Últimos 30 dias</option>
+        <option value="90">Últimos 90 dias</option>
+        <option value="0">Todo o histórico</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<main id="lista" aria-live="polite"></main>
+
+<script>
+(function () {
+  var ABAS = [
+    { id: "todos",     rotulo: "Todos" },
+    { id: "suspensao", rotulo: "Suspensões" },
+    { id: "aprovacao", rotulo: "Aprovações" },
+    { id: "outros",    rotulo: "Outros atos" }
+  ];
+  var ROTULO_CAT = { suspensao: "Suspensão", aprovacao: "Aprovação", outros: "Outro ato" };
+  var ROTULO_UN = { GGFIS: "4ª Diretoria / GGFIS", GGMED: "2ª Diretoria / GGMED" };
+
+  var estado = { itens: [], aba: "todos" };
+  var $ = function (id) { return document.getElementById(id); };
+
+  function el(tag, cls, txt) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (txt != null) e.textContent = txt;
+    return e;
+  }
+  function semAcento(s) {
+    return (s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  }
+  function dataBR(iso) {
+    var p = iso.split("-");
+    return p.length === 3 ? p[2] + "/" + p[1] + "/" + p[0] : iso;
+  }
+  function diaSemana(iso) {
+    var d = new Date(iso + "T12:00:00");
+    return isNaN(d) ? "" : d.toLocaleDateString("pt-BR", { weekday: "long" });
+  }
+
+  function filtrados(ignorarAba) {
+    var q = semAcento($("busca").value.trim());
+    var dias = parseInt($("periodo").value, 10);
+    var corte = "";
+    if (dias > 0) {
+      var d = new Date(); d.setDate(d.getDate() - dias);
+      corte = d.toISOString().slice(0, 10);
+    }
+    return estado.itens.filter(function (i) {
+      if (corte && i.data < corte) return false;
+      if (!ignorarAba && estado.aba !== "todos" && i.categoria !== estado.aba) return false;
+      if (q) {
+        var alvo = semAcento([i.titulo, i.ementa, i.texto, i.tipo].join(" "));
+        if (alvo.indexOf(q) === -1) return false;
+      }
+      return true;
+    });
+  }
+
+  function desenharAbas() {
+    var base = filtrados(true);
+    var cont = $("abas");
+    cont.textContent = "";
+    ABAS.forEach(function (a) {
+      var n = a.id === "todos" ? base.length : base.filter(function (i) { return i.categoria === a.id; }).length;
+      var b = el("button", "aba");
+      b.type = "button";
+      b.setAttribute("aria-pressed", String(estado.aba === a.id));
+      b.appendChild(el("span", null, a.rotulo));
+      b.appendChild(el("span", "n", String(n)));
+      b.addEventListener("click", function () { estado.aba = a.id; desenhar(); });
+      cont.appendChild(b);
+    });
+  }
+
+  function desenharAto(i) {
+    var art = el("article", "ato");
+    art.dataset.cat = i.categoria;
+
+    var rot = el("div", "rotulos");
+    rot.appendChild(el("span", "tipo", ROTULO_CAT[i.categoria] || "Outro ato"));
+    rot.appendChild(el("span", "un", ROTULO_UN[i.unidade] || i.unidade));
+    if (i.edicao === "DO1E") rot.appendChild(el("span", "un", "Edição extra"));
+    art.appendChild(rot);
+
+    art.appendChild(el("h3", null, i.titulo || "(sem título)"));
+
+    var resumo = i.ementa || (i.texto || "").replace(/\s+/g, " ").slice(0, 240);
+    if (resumo) art.appendChild(el("p", "resumo", resumo + (!i.ementa && i.texto.length > 240 ? "…" : "")));
+
+    var acoes = el("div", "acoes");
+    if (i.texto) {
+      var det = el("details");
+      det.appendChild(el("summary", null, "Ler texto do ato"));
+      det.appendChild(el("div", "texto", i.texto + (i.truncado ? "\n\n[Texto resumido. Veja o ato completo no DOU.]" : "")));
+      art.appendChild(det);
+    }
+    if (i.pdf) {
+      var a = el("a", null, "Abrir página no DOU");
+      a.href = i.pdf; a.target = "_blank"; a.rel = "noopener";
+      acoes.appendChild(a);
+    }
+    var q = el("a", null, "Buscar no DOU");
+    q.href = "https://www.in.gov.br/consulta/-/buscar/dou?q=" + encodeURIComponent('"' + (i.titulo || "") + '"') + "&s=do1";
+    q.target = "_blank"; q.rel = "noopener";
+    acoes.appendChild(q);
+    art.appendChild(acoes);
+    return art;
+  }
+
+  function desenhar() {
+    desenharAbas();
+    var lista = $("lista");
+    lista.textContent = "";
+    var itens = filtrados(false);
+
+    if (!itens.length) {
+      lista.appendChild(el("div", "vazio",
+        estado.itens.length
+          ? "Nenhum ato encontrado com esses filtros. Tente ampliar o período ou limpar a busca."
+          : "Ainda não há atos coletados. Rode o workflow “Atualizar publicações do DOU” no GitHub para o primeiro preenchimento."));
+      return;
+    }
+    var grupo = null, secao = null, contador = null, n = 0;
+    itens.forEach(function (i) {
+      if (i.data !== grupo) {
+        if (contador) contador.textContent = n + (n === 1 ? " ato" : " atos");
+        grupo = i.data; n = 0;
+        var h = el("div", "dia");
+        h.appendChild(el("h2", null, dataBR(i.data) + ", " + diaSemana(i.data)));
+        contador = el("span");
+        h.appendChild(contador);
+        lista.appendChild(h);
+      }
+      n++;
+      lista.appendChild(desenharAto(i));
+    });
+    if (contador) contador.textContent = n + (n === 1 ? " ato" : " atos");
+  }
+
+  $("busca").addEventListener("input", desenhar);
+  $("periodo").addEventListener("change", desenhar);
+
+  fetch("dados.json", { cache: "no-cache" })
+    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function (d) {
+      estado.itens = d.itens || [];
+      if (d.atualizado_em) {
+        var t = new Date(d.atualizado_em);
+        $("atualizado").textContent = "Atualizado em " +
+          t.toLocaleDateString("pt-BR") + " às " +
+          t.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+      } else {
+        $("atualizado").textContent = "Aguardando a primeira coleta";
+      }
+      desenhar();
+    })
+    .catch(function () {
+      $("atualizado").textContent = "Não foi possível carregar os dados";
+      $("lista").appendChild(el("div", "vazio",
+        "Não consegui abrir dados.json. Se estiver testando no computador, sirva a pasta docs com “python -m http.server”."));
+    });
+})();
+</script>
+</body>
+</html>
